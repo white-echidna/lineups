@@ -1,0 +1,13 @@
+# {{ map }} Lineups
+{% if description %}
+
+{{ description }}
+{% endif %}
+{% for site, lineups in sites.items() %}
+
+### _{{ site }}_
+
+{% for item in lineups %}
+{{ loop.index }}. **{{ item.name }}**: [`{{ item.filename }}`]({{ item.filename }})
+{% endfor %}
+{% endfor %}

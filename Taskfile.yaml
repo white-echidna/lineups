@@ -1,0 +1,54 @@
+version: "3"
+
+vars:
+  SPEC_DIR: spec
+  TEMPLATES_DIR: templates
+
+tasks:
+  generate:
+    desc: Generate Markdown documentation for all maps
+    sources:
+      - "{{.SPEC_DIR}}/*.yaml"
+    cmds:
+      - for: sources
+        task: generate:map
+        vars:
+          MAP: '{{trimSuffix ".yaml" (base .ITEM)}}'
+
+  generate:map:
+    desc: Generate Markdown documentation for a single map
+    requires:
+      vars: [MAP]
+    sources:
+      - "{{.SPEC_DIR}}/{{.MAP}}.yaml"
+      - "{{.TEMPLATES_DIR}}/*.j2"
+    generates:
+      - "{{.MAP}}/*.md"
+    cmds:
+      - >
+        uv run python tools/generate.py
+        --map-name "{{.MAP}}"
+        --spec "{{.SPEC_DIR}}/{{.MAP}}.yaml"
+        --output-dir "{{.MAP}}"
+        --templates-dir "{{.TEMPLATES_DIR}}"
+
+  webp:
+    desc: Convert all PNG images across map folders to WebP format
+    sources:
+      - "**/images/*.png"
+    cmds:
+      - for: sources
+        task: webp:file
+        vars:
+          FILE: "{{.ITEM}}"
+
+  webp:file:
+    desc: Convert a single PNG image to WebP format
+    requires:
+      vars: [FILE]
+    sources:
+      - "{{.FILE}}"
+    generates:
+      - '{{replace ".png" ".webp" .FILE}}'
+    cmds:
+      - ./tools/convert_to_webp.sh "{{.FILE}}"

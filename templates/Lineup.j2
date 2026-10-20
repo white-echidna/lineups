@@ -1,0 +1,23 @@
+# {{ map }}, {{ site }}, lineup #{{ num }}
+
+## _{{ name }}_
+
+> _Style:_ `{{ style | join('` or `') }}`
+{% if comment %}
+
+> _Comment:_ {{ comment }}
+{% endif %}
+{% if description %}
+
+### Description
+
+{{ description }}
+{% endif %}
+
+### Visual Guide
+
+<div style="display: flex; flex-direction: column; justify-content: space-between; gap: 5px;">
+  {% for img in images %}
+  <img src="{{ img }}" style="width: 100%; max-width: 500px; height: auto;">
+  {% endfor %}
+</div>
